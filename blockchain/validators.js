@@ -3,3 +3,5 @@ class Validators {
     this.list = [];
   }
 }
+
+module.exports = Validators;

@@ -5,13 +5,14 @@ const Validators = require("./validators");
 
 class Blockchain {
   constructor() {
-    this.chain = [Block.gensis()];
+    this.chain = [Block.genesis()];
     this.stakes = new Stake();
     this.accounts = new Account();
     this.validators = new Validators();
   }
 
-  addBlock(block) {
+  addBlock(data) {
+    const block = Block.createBlock(this.chain[this.chain.length - 1], data);
     this.chain.push(block);
     console.log("NEW BLOCK ADDED");
     return block;

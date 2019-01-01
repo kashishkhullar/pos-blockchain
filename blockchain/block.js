@@ -29,7 +29,7 @@ class Block {
   }
 
   static hash(timestamp, lastHash, data) {
-    return SHA256(JSON.stringify(`${timestamp}${lastHash}${data}`));
+    return SHA256(JSON.stringify(`${timestamp}${lastHash}${data}`)).toString();
   }
 
   static blockHash(block) {
@@ -38,4 +38,4 @@ class Block {
   }
 }
 
-module.exports = BLock;
+module.exports = Block;
