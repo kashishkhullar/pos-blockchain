@@ -47,6 +47,10 @@ class Blockchain {
     console.log("Replacing the current chain with new chain");
     this.chain = newChain;
   }
+
+  getBalance(publicKey) {
+    return this.accounts.getBalance(publicKey);
+  }
 }
 
 module.exports = Blockchain;
