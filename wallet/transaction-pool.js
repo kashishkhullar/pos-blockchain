@@ -1,4 +1,5 @@
 const Transaction = require("./transaction");
+const { TRANSACTION_THRESHOLD } = require("../config");
 
 class TransactionPool {
   constructor() {
@@ -6,12 +7,11 @@ class TransactionPool {
   }
 
   addTransaction(transaction) {
-    let transactionWithId = this.transactions.find(
-      t => t.id === transaction.id
-    );
-
-    if (!transactionWithId) {
-      this.transactions.push(transaction);
+    this.transactions.push(transaction);
+    if (this.transactions.length >= TRANSACTION_THRESHOLD) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -24,6 +24,11 @@ class TransactionPool {
 
       return transaction;
     });
+  }
+
+  transactionExists(transaction) {
+    let exists = this.transactions.find(t => t.id === transaction.id);
+    return exists;
   }
 
   clear() {

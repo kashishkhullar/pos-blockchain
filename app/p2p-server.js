@@ -8,16 +8,15 @@ const MESSAGE_TYPE = {
   chain: "CHAIN",
   block: "BLOCK",
   transaction: "TRANSACTION",
-  stake: "STAKE",
-  validator_fee: "VALIDATOR_FEE",
   clear_transactions: "CLEAR_TRANSACTIONS"
 };
 
 class P2pserver {
-  constructor(blockchain, transactionPool) {
+  constructor(blockchain, transactionPool, wallet) {
     this.blockchain = blockchain;
     this.sockets = [];
     this.transactionPool = transactionPool;
+    this.wallet = wallet;
   }
 
   listen() {
@@ -50,6 +49,18 @@ class P2pserver {
         case MESSAGE_TYPE.chain:
           this.blockchain.replaceChain(data.chain);
           break;
+
+        case MESSAGE_TYPE.transaction:
+          if (!this.transactionPool.transactionExists(data.transaction)) {
+            let thresholdReached = this.transactionPool.addTransaction(
+              data.transaction
+            );
+            this.broadcastTransaction(data.transaction);
+            if (thresholdReached) {
+              console.log("going to elect leader");
+            }
+          }
+          break;
       }
     });
   }
@@ -67,6 +78,21 @@ class P2pserver {
     this.sockets.forEach(socket => {
       this.sendChain(socket);
     });
+  }
+
+  broadcastTransaction(transaction) {
+    this.sockets.forEach(socket => {
+      this.sendTransaction(socket, transaction);
+    });
+  }
+
+  sendTransaction(socket, transaction) {
+    socket.send(
+      JSON.stringify({
+        type: MESSAGE_TYPE.transaction,
+        transaction: transaction
+      })
+    );
   }
 }
 

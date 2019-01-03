@@ -39,7 +39,7 @@ app.post("/transact", (req, res) => {
     blockchain,
     transactionPool
   );
-  // p2pserver.broadcastTransaction(transaction);
+  p2pserver.broadcastTransaction(transaction);
   res.redirect("/transactions");
 });
 

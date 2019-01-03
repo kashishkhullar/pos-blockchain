@@ -51,6 +51,8 @@ class Blockchain {
   getBalance(publicKey) {
     return this.accounts.getBalance(publicKey);
   }
+
+  getLeader() {}
 }
 
 module.exports = Blockchain;
