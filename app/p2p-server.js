@@ -8,7 +8,8 @@ const MESSAGE_TYPE = {
   chain: "CHAIN",
   block: "BLOCK",
   transaction: "TRANSACTION",
-  clear_transactions: "CLEAR_TRANSACTIONS"
+  clear_transactions: "CLEAR_TRANSACTIONS",
+  new_peer: "NEW_PEER"
 };
 
 class P2pserver {
@@ -57,8 +58,30 @@ class P2pserver {
             );
             this.broadcastTransaction(data.transaction);
             if (thresholdReached) {
-              console.log("going to elect leader");
+              console.log("threshold reached in p2pserver");
+              console.log(
+                `Leader:, ${this.blockchain.getLeader()}, wallet key ${this.wallet.getPublicKey()}`
+              );
+              if (this.blockchain.getLeader() == this.wallet.getPublicKey()) {
+                console.log("I am the leader and i am makin the block");
+                let block = this.blockchain.createBlock(
+                  this.transactionPool.transactions
+                );
+                this.broadcastBlock(block);
+              }
             }
+          }
+          console.log(
+            `balance: ${this.blockchain.getBalance(this.wallet.getPublicKey())}`
+          );
+          break;
+
+        case MESSAGE_TYPE.block:
+          if (this.blockchain.isValidBlock(data.block)) {
+            this.blockchain.addBlock(data.block);
+            this.blockchain.executeTransactions(data.block);
+            this.broadcastBlock(data.block);
+            this.transactionPool.clear();
           }
           break;
       }
@@ -93,6 +116,27 @@ class P2pserver {
         transaction: transaction
       })
     );
+  }
+
+  broadcastBlock(block) {
+    this.sockets.forEach(socket => {
+      this.sendBlock(socket, block);
+    });
+  }
+
+  sendBlock(socket, block) {
+    socket.send(
+      JSON.stringify({
+        type: MESSAGE_TYPE.block,
+        block: block
+      })
+    );
+  }
+
+  bootstrapSystem() {
+    console.log("beginning bootstrapping");
+    let block = this.blockchain.createBlock(this.transactionPool.transactions);
+    this.broadcastBlock(block);
   }
 }
 

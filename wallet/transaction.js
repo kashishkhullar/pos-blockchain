@@ -17,12 +17,13 @@ class Transaction {
     return Transaction.generateTransaction(senderWallet, to, amount, type);
   }
 
-  static generateTransaction(senderWallet, to, amount) {
+  static generateTransaction(senderWallet, to, amount, type) {
     const transaction = new this();
     transaction.type = type;
     transaction.output = {
       to: to,
-      amount: amount
+      amount: amount,
+      type: type
     };
     Transaction.signTransaction(transaction, senderWallet);
     return transaction;

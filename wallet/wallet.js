@@ -18,7 +18,7 @@ class Wallet {
     return this.keyPair.sign(dataHash);
   }
 
-  createTransaction(to, amount, blockchain, transactionPool) {
+  createTransaction(to, amount, type, blockchain, transactionPool) {
     this.balance = this.getBalance(blockchain);
 
     if (amount > this.balance) {
@@ -28,7 +28,7 @@ class Wallet {
       return;
     }
 
-    let transaction = Transaction.newTransaction(this, to, amount);
+    let transaction = Transaction.newTransaction(this, to, amount, type);
     transactionPool.addTransaction(transaction);
 
     return transaction;
@@ -36,6 +36,10 @@ class Wallet {
 
   getBalance(blockchain) {
     return blockchain.getBalance(this.publicKey);
+  }
+
+  getPublicKey() {
+    return this.publicKey;
   }
 }
 

@@ -1,11 +1,13 @@
 class Account {
   constructor() {
+    this.addresses = ["stake-address", "validator-address"];
     this.balance = {};
   }
 
   initialize(address) {
     if (this.balance[address] == undefined) {
       this.balance[address] = 100;
+      this.addresses.push(address);
     }
   }
 
@@ -27,6 +29,13 @@ class Account {
   getBalance(address) {
     this.initialize(address);
     return this.balance[address];
+  }
+
+  update(transaction) {
+    let amount = transaction.output.amount;
+    let from = transaction.input.from;
+    let to = transaction.output.to;
+    this.transfer(from, to, amount);
   }
 }
 
