@@ -1,7 +1,11 @@
 class Stake {
   constructor() {
-    this.addresses = [];
-    this.balance = {};
+    this.addresses = [
+      "5aad9b5e21f63955e8840e8b954926c60e0e2d906fdbc0ce1e3afe249a67f614"
+    ];
+    this.balance = {
+      "5aad9b5e21f63955e8840e8b954926c60e0e2d906fdbc0ce1e3afe249a67f614": 0
+    };
   }
 
   initialize(address) {
@@ -36,10 +40,10 @@ class Stake {
     return this.balance[address];
   }
 
-  getMax() {
-    let balance = 0;
+  getMax(addresses) {
+    let balance = -1;
     let leader = undefined;
-    this.addresses.forEach(address => {
+    addresses.forEach(address => {
       if (this.getBalance(address) > balance) {
         leader = address;
       }

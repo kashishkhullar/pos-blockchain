@@ -4,6 +4,8 @@ const P2P_PORT = process.env.P2P_PORT || 5001;
 
 const peers = process.env.PEERS ? process.env.PEERS.split(",") : [];
 
+const { TRANSACTION_THRESHOLD } = require("../config");
+
 const MESSAGE_TYPE = {
   chain: "CHAIN",
   block: "BLOCK",
@@ -22,7 +24,10 @@ class P2pserver {
 
   listen() {
     const server = new WebSocket.Server({ port: P2P_PORT });
-    server.on("connection", socket => this.connectSocket(socket));
+    server.on("connection", socket => {
+      socket.isAlive = true;
+      this.connectSocket(socket);
+    });
     this.connectToPeers();
     console.log(`Listening for peer to peer connection on port : ${P2P_PORT}`);
   }
@@ -31,6 +36,7 @@ class P2pserver {
     this.sockets.push(socket);
     console.log("Socket connected");
     this.messageHandler(socket);
+    this.closeConnectionHandler(socket);
     this.sendChain(socket);
   }
 
@@ -62,10 +68,12 @@ class P2pserver {
               console.log(
                 `Leader:, ${this.blockchain.getLeader()}, wallet key ${this.wallet.getPublicKey()}`
               );
+
               if (this.blockchain.getLeader() == this.wallet.getPublicKey()) {
                 console.log("I am the leader and i am makin the block");
                 let block = this.blockchain.createBlock(
-                  this.transactionPool.transactions
+                  this.transactionPool.transactions,
+                  this.wallet
                 );
                 this.broadcastBlock(block);
               }
@@ -78,14 +86,18 @@ class P2pserver {
 
         case MESSAGE_TYPE.block:
           if (this.blockchain.isValidBlock(data.block)) {
-            this.blockchain.addBlock(data.block);
-            this.blockchain.executeTransactions(data.block);
+            // this.blockchain.addBlock(data.block);
+            // this.blockchain.executeTransactions(data.block);
             this.broadcastBlock(data.block);
             this.transactionPool.clear();
           }
           break;
       }
     });
+  }
+
+  closeConnectionHandler(socket) {
+    socket.on("close", () => (socket.isAlive = false));
   }
 
   sendChain(socket) {
@@ -137,6 +149,16 @@ class P2pserver {
     console.log("beginning bootstrapping");
     let block = this.blockchain.createBlock(this.transactionPool.transactions);
     this.broadcastBlock(block);
+  }
+
+  checkThreshold() {
+    if (this.transactionPool.transactions.length == TRANSACTION_THRESHOLD) {
+      let block = this.blockchain.createBlock(
+        this.transactionPool.transactions,
+        this.wallet
+      );
+      this.broadcastBlock(block);
+    }
   }
 }
 

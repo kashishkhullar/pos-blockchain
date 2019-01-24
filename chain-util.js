@@ -1,13 +1,13 @@
-const EC = require("elliptic").ec;
-const ec = new EC("secp256k1");
+const EC = require("elliptic").eddsa;
+const ec = new EC("ed25519");
 
 const uuidV1 = require("uuid/v1");
 
 const SHA256 = require("crypto-js/sha256");
 
 class ChainUtil {
-  static genKeyPair() {
-    return ec.genKeyPair();
+  static genKeyPair(secret) {
+    return ec.keyFromSecret(secret);
   }
 
   static id() {
@@ -19,7 +19,10 @@ class ChainUtil {
   }
 
   static verifySignature(publicKey, signature, dataHash) {
-    return ec.keyFromPublic(publicKey, "hex").verify(dataHash, signature);
+    console.log(publicKey);
+    console.log(signature);
+    console.log(dataHash);
+    return ec.keyFromPublic(publicKey).verify(dataHash, signature);
   }
 }
 

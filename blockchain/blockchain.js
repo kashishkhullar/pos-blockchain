@@ -23,10 +23,11 @@ class Blockchain {
     return block;
   }
 
-  createBlock(transactions) {
+  createBlock(transactions, wallet) {
     const block = Block.createBlock(
       this.chain[this.chain.length - 1],
-      transactions
+      transactions,
+      wallet
     );
     return block;
   }
@@ -67,7 +68,7 @@ class Blockchain {
   }
 
   getLeader() {
-    return this.stakes.getMax();
+    return this.stakes.getMax(this.validators.list);
   }
 
   initialize(address) {
@@ -78,12 +79,24 @@ class Blockchain {
   isValidBlock(block) {
     const lastBlock = this.chain[this.chain.length - 1];
     if (
-      block.lastHash !== lastBlock.hash ||
-      block.hash !== Block.blockHash(block)
+      block.lastHash === lastBlock.hash &&
+      block.hash === Block.blockHash(block) &&
+      Block.verifyBlock(block) &&
+      Block.verifyLeader(block, this.getLeader())
     ) {
-      return false;
-    } else {
+      console.log("block valid");
+      this.addBlock(block);
+      this.executeTransactions(block);
       return true;
+    } else {
+      // console.log(
+      //   block.lastHash !== lastBlock.hash,
+      //   block.hash !== Block.blockHash(block),
+      //   Block.verifyBlock(block),
+      //   Block.verifyLeader(block, this.getLeader())
+      // );
+
+      return false;
     }
   }
 
@@ -97,7 +110,10 @@ class Blockchain {
           this.stakes.update(transaction);
           break;
         case TRANSACTION_TYPE.validator_fee:
-          this.validators.update(transaction);
+          if (this.validators.update(transaction)) {
+            this.accounts.update(transaction);
+            this.stakes.initialize(transaction.input.from);
+          }
           break;
       }
     });

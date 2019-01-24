@@ -9,7 +9,6 @@ class TransactionPool {
   addTransaction(transaction) {
     this.transactions.push(transaction);
     if (this.transactions.length >= TRANSACTION_THRESHOLD) {
-      console.log("here");
       return true;
     } else {
       return false;
