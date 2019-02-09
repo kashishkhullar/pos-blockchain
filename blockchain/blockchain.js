@@ -59,6 +59,7 @@ class Blockchain {
     }
 
     console.log("Replacing the current chain with new chain");
+    this.resetState();
     this.executeChain(newChain);
     this.chain = newChain;
   }
@@ -105,14 +106,24 @@ class Blockchain {
       switch (transaction.type) {
         case TRANSACTION_TYPE.transaction:
           this.accounts.update(transaction);
+          this.accounts.transferFee(block, transaction);
           break;
         case TRANSACTION_TYPE.stake:
           this.stakes.update(transaction);
+          this.accounts.decrement(
+            transaction.input.from,
+            transaction.output.amount
+          );
+          this.accounts.transferFee(block, transaction);
+
           break;
         case TRANSACTION_TYPE.validator_fee:
           if (this.validators.update(transaction)) {
-            this.accounts.update(transaction);
-            this.stakes.initialize(transaction.input.from);
+            this.accounts.decrement(
+              transaction.input.from,
+              transaction.output.amount
+            );
+            this.accounts.transferFee(block, transaction);
           }
           break;
       }
@@ -123,6 +134,13 @@ class Blockchain {
     chain.forEach(block => {
       this.executeTransactions(block);
     });
+  }
+
+  resetState() {
+    this.chain = [Block.genesis()];
+    this.stakes = new Stake();
+    this.accounts = new Account();
+    this.validators = new Validators();
   }
 }
 

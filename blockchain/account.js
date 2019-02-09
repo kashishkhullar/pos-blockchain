@@ -41,6 +41,13 @@ class Account {
     let to = transaction.output.to;
     this.transfer(from, to, amount);
   }
+
+  transferFee(block, transaction) {
+    let amount = transaction.output.fee;
+    let from = transaction.input.from;
+    let to = block.validator;
+    this.transfer(from, to, amount);
+  }
 }
 
 module.exports = Account;

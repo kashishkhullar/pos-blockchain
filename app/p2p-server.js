@@ -10,8 +10,7 @@ const MESSAGE_TYPE = {
   chain: "CHAIN",
   block: "BLOCK",
   transaction: "TRANSACTION",
-  clear_transactions: "CLEAR_TRANSACTIONS",
-  new_peer: "NEW_PEER"
+  clear_transactions: "CLEAR_TRANSACTIONS"
 };
 
 class P2pserver {
@@ -64,13 +63,8 @@ class P2pserver {
             );
             this.broadcastTransaction(data.transaction);
             if (thresholdReached) {
-              console.log("threshold reached in p2pserver");
-              console.log(
-                `Leader:, ${this.blockchain.getLeader()}, wallet key ${this.wallet.getPublicKey()}`
-              );
-
               if (this.blockchain.getLeader() == this.wallet.getPublicKey()) {
-                console.log("I am the leader and i am makin the block");
+                console.log("Creating block");
                 let block = this.blockchain.createBlock(
                   this.transactionPool.transactions,
                   this.wallet
@@ -79,9 +73,6 @@ class P2pserver {
               }
             }
           }
-          console.log(
-            `balance: ${this.blockchain.getBalance(this.wallet.getPublicKey())}`
-          );
           break;
 
         case MESSAGE_TYPE.block:

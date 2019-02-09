@@ -3,7 +3,7 @@ const Transaction = require("./transaction");
 
 class Wallet {
   constructor(secret) {
-    this.balance = null;
+    this.balance = 100;
     this.keyPair = ChainUtil.genKeyPair(secret);
     this.publicKey = this.keyPair.getPublic("hex");
   }

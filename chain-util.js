@@ -1,5 +1,5 @@
-const EC = require("elliptic").eddsa;
-const ec = new EC("ed25519");
+const EDDSA = require("elliptic").eddsa;
+const eddsa = new EDDSA("ed25519");
 
 const uuidV1 = require("uuid/v1");
 
@@ -7,7 +7,7 @@ const SHA256 = require("crypto-js/sha256");
 
 class ChainUtil {
   static genKeyPair(secret) {
-    return ec.keyFromSecret(secret);
+    return eddsa.keyFromSecret(secret);
   }
 
   static id() {
