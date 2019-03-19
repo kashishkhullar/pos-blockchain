@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const P2pserver = require("../app/p2p-server");
 const Wallet = require("../wallet/wallet");
 const TransactionPool = require("../wallet/transaction-pool");
+const { TRANSACTION_THRESHOLD } = require("../config");
 
 const HTTP_PORT = 3000;
 
@@ -34,8 +35,10 @@ app.post("/ico/transact", (req, res) => {
     blockchain,
     transactionPool
   );
+  if (transactionPool.transactions.length >= TRANSACTION_THRESHOLD) {
+    blockchain.createBlock(transactionPool.transactions, wallet);
+  }
   p2pserver.broadcastTransaction(transaction);
-  p2pserver.checkThreshold();
   res.redirect("/ico/transactions");
 });
 

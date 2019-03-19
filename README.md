@@ -1,10 +1,17 @@
-npm run dev
+### Run an ICO
 
-HTTP_PORT=3002 P2P_PORT=5002 PEERS=wc://localhost:5001 npm run dev
+`npm run ico`
 
-HTTP_PORT=3003 P2P_PORT=5003 PEERS=wc://localhost:5002 npm run dev
+### Run nodes
 
-For first leader:
-use bootstrap method with value in from field as BOOTSTRAP
-create a global variable BOOTSTRAPED = false
-check if BOOTSTRAP is done
+`npm run dev`
+
+`HTTP_PORT=3002 P2P_PORT=5002 PEERS=wc://localhost:5001 npm run dev`
+
+`HTTP_PORT=3003 P2P_PORT=5003 PEERS=wc://localhost:5002 npm run dev`
+
+### Initiate System
+
+1. Send coins to the nodes using ico
+2. Recievers can now send stake transactions to be eligible to be elected as leader
+3. Recievers can now send normal transactions to other nodes
