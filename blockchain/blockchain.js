@@ -2,6 +2,8 @@ const Block = require("./block");
 const Stake = require("./stake");
 const Account = require("./account");
 const Validators = require("./validators");
+const Wallet = require("../wallet/wallet");
+let secret = "i am the first leader";
 
 const TRANSACTION_TYPE = {
   transaction: "TRANSACTION",
@@ -17,7 +19,13 @@ class Blockchain {
     this.validators = new Validators();
   }
 
-  addBlock(block) {
+  addBlock(data) {
+    let block = Block.createBlock(
+      this.chain[this.chain.length - 1],
+      data,
+      new Wallet(secret)
+    );
+
     this.chain.push(block);
     console.log("NEW BLOCK ADDED");
     return block;
@@ -39,6 +47,7 @@ class Blockchain {
     for (let i = 1; i < chain.length; i++) {
       const block = chain[i];
       const lastBlock = chain[i - 1];
+
       if (
         block.lastHash !== lastBlock.hash ||
         block.hash !== Block.blockHash(block)

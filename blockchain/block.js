@@ -25,10 +25,12 @@ class Block {
     return new this(`genesis time`, "----", "genesis-hash", []);
   }
 
-  static createBlock(lastBlock, data, wallet) {
+  static createBlock(lastBlock, _data, wallet) {
     let hash;
     let timestamp = Date.now();
     const lastHash = lastBlock.hash;
+    let data = [];
+    data.push(_data);
     hash = Block.hash(timestamp, lastHash, data);
     let validator = wallet.getPublicKey();
     let signature = Block.signBlockHash(hash, wallet);
