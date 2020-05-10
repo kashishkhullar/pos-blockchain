@@ -1,7 +1,11 @@
 const Blockchain = require("./blockchain");
 const Block = require("./block");
+const Wallet = require("../wallet/wallet");
+
 describe("Blockchain", () => {
   let blockchain, blockchain2;
+
+  let secret = "i am the first leader";
 
   beforeEach(() => {
     blockchain = new Blockchain();
@@ -14,14 +18,18 @@ describe("Blockchain", () => {
 
   it("adds a new block", () => {
     const data = "foo";
+
     blockchain.addBlock(data);
-    expect(blockchain.chain[blockchain.chain.length - 1].data).toEqual(data);
+    expect(blockchain.chain[blockchain.chain.length - 1].data[0]).toEqual(data);
   });
 
   it("validates a valid chain", () => {
-    blockchain2.addBlock("foo");
+    const data = "foo";
+
+    blockchain2.addBlock(data);
     // conventional method for check true and false is toBe
-    expect(blockchain.isValidChain(blockchain2.chain)).toBe(true);
+
+    expect(blockchain2.isValidChain(blockchain2.chain)).toBe(true);
   });
 
   it("invalidates a chain with a corrupt the genesis block", () => {
@@ -48,4 +56,7 @@ describe("Blockchain", () => {
     blockchain.replaceChain(blockchain2.chain);
     expect(blockchain.chain).not.toEqual(blockchain2.chain);
   });
+
+  /*
+   */
 });
