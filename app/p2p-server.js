@@ -141,22 +141,6 @@ class P2pserver {
       })
     );
   }
-
-  bootstrapSystem() {
-    console.log("beginning bootstrapping");
-    let block = this.blockchain.createBlock(this.transactionPool.transactions, this.wallet);
-    this.broadcastBlock(block);
-  }
-
-  checkThreshold() {
-    if (this.transactionPool.transactions.length == TRANSACTION_THRESHOLD) {
-      let block = this.blockchain.createBlock(
-        this.transactionPool.transactions,
-        this.wallet
-      );
-      this.broadcastBlock(block);
-    }
-  }
 }
 
 module.exports = P2pserver;
