@@ -35,10 +35,11 @@ app.post("/ico/transact", (req, res) => {
     blockchain,
     transactionPool
   );
-  if (transactionPool.transactions.length >= TRANSACTION_THRESHOLD) {
-    blockchain.createBlock(transactionPool.transactions, wallet);
-  }
   p2pserver.broadcastTransaction(transaction);
+  if (transactionPool.transactions.length >= TRANSACTION_THRESHOLD) {
+    let block = blockchain.createBlock(transactionPool.transactions, wallet);
+    p2pserver.broadcastBlock(block);
+  }
   res.redirect("/ico/transactions");
 });
 

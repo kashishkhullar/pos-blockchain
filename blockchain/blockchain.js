@@ -118,6 +118,7 @@ class Blockchain {
 
           break;
         case TRANSACTION_TYPE.validator_fee:
+          console.log("VALIDATOR_FEE")
           if (this.validators.update(transaction)) {
             this.accounts.decrement(
               transaction.input.from,

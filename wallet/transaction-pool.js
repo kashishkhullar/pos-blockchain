@@ -6,6 +6,14 @@ class TransactionPool {
     this.transactions = [];
   }
 
+  thresholdReached() {
+    if (this.transactions.length >= TRANSACTION_THRESHOLD) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   addTransaction(transaction) {
     this.transactions.push(transaction);
     if (this.transactions.length >= TRANSACTION_THRESHOLD) {
