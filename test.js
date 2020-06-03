@@ -24,3 +24,9 @@ let key2 = ec.keyFromPublic(key.getPublic("hex"));
 
 // console.log(key.getPublic("hex") === key2.getPublic("hex"));
 console.log(key2.verify(hash, signature));
+
+describe("Test", () => {
+  it("00 contain at least one test", () => {
+    expect(1).toEqual(1);
+  });
+});
