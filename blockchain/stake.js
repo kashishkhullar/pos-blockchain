@@ -46,6 +46,7 @@ class Stake {
     addresses.forEach(address => {
       if (this.getBalance(address) > balance) {
         leader = address;
+        balance = this.getBalance(address);
       }
     });
     return leader;
