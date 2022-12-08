@@ -19,10 +19,10 @@
     "nodemon": "^1.18.9"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.1",
     "crypto-js": "^3.1.9-1",
     "elliptic": "^6.4.1",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "uuid": "^3.3.2",
     "ws": "^6.1.2"
   }
